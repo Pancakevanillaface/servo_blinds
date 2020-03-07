@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Pancakevanillaface/autoblinds",
     packages=find_packages(),
-    python_requires='==3.7.5',
+    python_requires='==3.7',
     py_modules=['autoblinds'],
     install_requires=[
         'Click',
