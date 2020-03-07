@@ -1,4 +1,5 @@
 import yaml
+import time
 
 
 class ServosController(object):
@@ -6,10 +7,24 @@ class ServosController(object):
         self.config_path = config_path
         self.config = {}
         self.read_current_config()
+        self.check_config()
 
     def read_current_config(self):
         with open(self.config_path) as c:
             self.config = yaml.load(c, Loader=yaml.FullLoader)
+
+    def check_config(self):
+        assert 'AUTO' in self.config
+        if 'UPDATE_FREQUENCY' not in self.config:
+            self.config['UPDATE_FREQUENCY'] = 10
+        for key, val in self.config.items():
+            if isinstance(key, int):
+                assert 'STATUS' in val
+                assert 0.0 <= val['STATUS'] <= 1.0
+                if not 'SUNRISE_BUFFER' in val:
+                    self.config[key]['SUNRISE_BUFFER'] = 0
+                if not 'SUNSET_BUFFER' in val:
+                    self.config[key]['SUNSET_BUFFER'] = 0
 
     def update_auto(self, bool_value):
         """
@@ -21,7 +36,9 @@ class ServosController(object):
 
     def engage_servos(self):
         while self.config['AUTO']:
-            pass
+            time.sleep(10*60*60)
+            # todo add servos doing things
+            self.read_current_config()
 
     def write_current_config(self):
         with open(self.config_path, 'w') as c:

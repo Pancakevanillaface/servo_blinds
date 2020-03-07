@@ -1,12 +1,16 @@
+# Initial AUTO value, it will get updated accordingly
 AUTO: True
+# In minutes, how often to check for changes to config. Will default to 10.
+UPDATE_FREQUENCY: 10
 
+# integer denotes the channel for the servo
 1:
   # Current status of the blind 0 is completely up, 1 is completely down. Required.
   STATUS: 0.0
   # If positive, delay in minutes on the blind sunrise operation. If negative, brings the blind sunrise operation by x
-  # time in minutes
+  # time in minutes. Will default to 0.
   SUNRISE_BUFFER: 60
   # If positive, delay in minutes on the blind sunset operation. If negative, brings the blind sunset operation by x
-  # time in minutes
+  # time in minutes. Will default to 0.
   SUNSET_BUFFER: -60
 
