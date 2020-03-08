@@ -14,13 +14,21 @@ class ServosController(object):
             self.config = yaml.load(c, Loader=yaml.FullLoader)
 
     def check_config(self):
+        """
+        Checks required values are in the config and gives defaults
+        :return:
+        """
         assert 'AUTO' in self.config
+        assert 'ALL_CHANNELS' in self.config
         if 'UPDATE_FREQUENCY' not in self.config:
             self.config['UPDATE_FREQUENCY'] = 10
         for key, val in self.config.items():
             if isinstance(key, int):
                 assert 'STATUS' in val
                 assert 0.0 <= val['STATUS'] <= 1.0
+
+                assert 'ROTATIONS_TO_CLOSE' in val
+
                 if not 'SUNRISE_BUFFER' in val:
                     self.config[key]['SUNRISE_BUFFER'] = 0
                 if not 'SUNSET_BUFFER' in val:
@@ -39,6 +47,7 @@ class ServosController(object):
             time.sleep(10*60*60)
             # todo add servos doing things
             self.read_current_config()
+        exit()
 
     def write_current_config(self):
         with open(self.config_path, 'w') as c:
