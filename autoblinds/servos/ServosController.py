@@ -44,7 +44,7 @@ class ServosController(object):
 
     def engage_servos(self):
         while self.config['AUTO']:
-            time.sleep(10*60*60)
+            time.sleep(self.config['UPDATE_FREQUENCY']*60*60)
             # todo add servos doing things
             self.read_current_config()
         exit()
