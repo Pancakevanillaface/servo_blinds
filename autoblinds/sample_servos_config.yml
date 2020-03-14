@@ -1,8 +1,8 @@
 # Initial AUTO value, it will get updated accordingly
 AUTO: True
-# In minutes, how often to check for changes to config. Will default to 10. Blind opening/closing with `BUFFER` delay
-# will be accurate up this value
-UPDATE_FREQUENCY: 10
+# Location's lat and lon
+LON: 51.5
+LAT: -0.116
 # number of all possible servo channels
 ALL_CHANNELS: 16
 
@@ -16,6 +16,4 @@ ALL_CHANNELS: 16
   # If positive, delay in minutes on the blind sunset operation. If negative, brings the blind sunset operation by x
   # time in minutes. Will default to 0.
   SUNSET_BUFFER: -60
-  # Number of 180 rotations the servo has to complete to complete the job (close the blind/curtain)
-  ROTATIONS_TO_CLOSE: 10
 

@@ -1,6 +1,9 @@
 import yaml
 import time
 
+import autoblinds.util.cron as cron
+import autoblinds.servos.calibrate as calibrate
+
 
 class ServosController(object):
     def __init__(self, config_path):
@@ -19,20 +22,26 @@ class ServosController(object):
         :return:
         """
         assert 'AUTO' in self.config
+        assert 'LAT' in self.config
+        assert 'LON' in self.config
         assert 'ALL_CHANNELS' in self.config
-        if 'UPDATE_FREQUENCY' not in self.config:
-            self.config['UPDATE_FREQUENCY'] = 10
-        for key, val in self.config.items():
-            if isinstance(key, int):
-                assert 'STATUS' in val
-                assert 0.0 <= val['STATUS'] <= 1.0
+        for key in self.extract_servo_channels():
+            assert 'STATUS' in self.config[key]
+            assert 0.0 <= self.config[key]['STATUS'] <= 1.0
 
-                assert 'ROTATIONS_TO_CLOSE' in val
+            if not 'SUNRISE_BUFFER' in self.config[key]:
+                self.config[key]['SUNRISE_BUFFER'] = 0
+            if not 'SUNSET_BUFFER' in self.config[key]:
+                self.config[key]['SUNSET_BUFFER'] = 0
 
-                if not 'SUNRISE_BUFFER' in val:
-                    self.config[key]['SUNRISE_BUFFER'] = 0
-                if not 'SUNSET_BUFFER' in val:
-                    self.config[key]['SUNSET_BUFFER'] = 0
+            if 'SERVO_DETAILS' in self.config[key]:
+                if not calibrate.check_config(self.config[key]['SERVO_DETAILS']):
+                    self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo()
+            else:
+                self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo()
+
+    def extract_servo_channels(self):
+        return [key for key in self.config if isinstance(key, int)]
 
     def update_auto(self, bool_value):
         """
@@ -42,12 +51,19 @@ class ServosController(object):
         self.config['AUTO'] = bool_value
         self.write_current_config()
 
-    def engage_servos(self):
-        while self.config['AUTO']:
-            time.sleep(self.config['UPDATE_FREQUENCY']*60*60)
-            # todo add servos doing things
-            self.read_current_config()
-        exit()
+    def check_state_and_auto(self):
+        """
+        Checks for updates in the config.
+        :return:
+        """
+        pass
+
+    def schedule_servo_cronjobs(self):
+        """
+        Schedules jobs for the next week and a job to schedule more jobs
+        :return:
+        """
+        cron.schedule_cron_jobs(self.config['LAT'], self.config['LON'])
 
     def write_current_config(self):
         with open(self.config_path, 'w') as c:

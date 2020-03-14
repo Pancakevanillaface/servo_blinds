@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="autoblinds", # Replace with your own username
+    name="autoblinds",
     version="0.0.1",
     author="pancakevanillaface",
     description="Python-based process to automate servos based on sunrise/sunset",
@@ -13,10 +13,12 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Pancakevanillaface/autoblinds",
     packages=find_packages(),
-    python_requires='==3.7',
+    python_requires='==3.7.3',
     py_modules=['autoblinds'],
     install_requires=[
         'Click',
+        'PyYAML',
+        'adafruit-circuitpython-servokit'
     ],
     entry_points='''
         [console_scripts]

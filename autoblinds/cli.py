@@ -24,7 +24,8 @@ def auto_on(config):
     """
     servos_controller = ServosController(config)
     servos_controller.update_auto(True)
-    servos_controller.engage_servos()
+    servos_controller.write_current_config()
+    servos_controller.schedule_servo_cronjobs()
 
 
 @auto.command('off')
@@ -37,6 +38,7 @@ def auto_off(config):
     """
     servos_controller = ServosController(config)
     servos_controller.update_auto(False)
+    servos_controller.write_current_config()
 
 
 @cli.group()
@@ -49,6 +51,9 @@ def override():
               default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
               help='Points to the config file defining servos')
 def override_auto():
+    """
+    Changes current state
+    """
     pass
 
 
