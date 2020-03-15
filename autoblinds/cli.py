@@ -62,8 +62,8 @@ def calibrate():
     pass
 
 
-@override.command()
-@calibrate.option('-c', '--config', required=False, type=str,
+@calibrate.command()
+@click.option('-c', '--config', required=False, type=str,
                   default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
                   help='Calibrates servos')
 def calibrate_servo(config):
