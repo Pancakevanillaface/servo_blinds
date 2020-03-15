@@ -15,7 +15,8 @@ def calibrate_servo(channels, channel):
     stationary_degrees = 80
     while is_stationary != 'y':
         kit.servo[channel].angle = stationary_degrees
-        is_stationary = input('Is the servo stationary? Answer only y or n')
+        is_stationary = input('Is the servo on channel {} stationary? '
+                              'Answer only y or n: '.format(channel))
         stationary_degrees += 1
     servo_details['stationary_degrees'] = stationary_degrees
 
@@ -23,9 +24,9 @@ def calibrate_servo(channels, channel):
     completely_finished = 'n'
     while completely_finished != 'y':
         kit.servo[channel].angle = 180
-        direction = input('Check the direction of the servo. Is is spinning in'
+        direction = input('Check the direction of the servo on channel {}. Is is spinning in '
                           'the direction to open or close the blind/curtain? '
-                          'Answer only o for open or c for close.')
+                          'Answer only o for open or c for close. '.format(channel))
         if direction=='o':
             servo_details['open_degrees'] = 180
             servo_details['close_degrees'] = 0
@@ -49,12 +50,12 @@ def calibrate_servo(channels, channel):
             kit.servo[channel].angle = servo_details['close_degrees']
             time.sleep(increase_delta)
             kit.servo[channel].angle = stationary_degrees
-            is_closed = input('Is the blind/curtain in the close position?'
-                              'Answer only y or n.')
+            is_closed = input('Is the blind/curtain in the close position? '
+                              'Answer only y or n. ')
         kit.servo[channel].angle = servo_details['open_degrees']
         time.sleep(period)
         kit.servo[channel].angle = stationary_degrees
-        completely_finished = input('Has the blind/curtain returned to the open position?'
+        completely_finished = input('Has the blind/curtain returned to the open position? '
                                     'Answer only y or n.')
 
     servo_details['close_time'] = period
