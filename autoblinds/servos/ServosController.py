@@ -61,7 +61,7 @@ class ServosController(object):
     def calibrate(self):
         for key in self.extract_servo_channels():
             self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo(
-                self.config['ALL_CHANNELS'], key
+                self.config['ALL_CHANNELS'], key, self.config[key]['SERVO_DETAILS']
             )
 
     def schedule_servo_cronjobs(self):
