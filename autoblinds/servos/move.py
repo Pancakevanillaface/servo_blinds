@@ -9,10 +9,9 @@ from autoblinds.servos.ServosController import ServosController
 
 def move_servo(channels, channel, movement, servo_details):
     kit = ServoKit(channels=channels)
-    stationary, period = servo_details
-    kit.servo[channel].angle = movement
-    time.sleep(period)
-    kit.servo[channel].angle = stationary
+    kit.servo[channel].angle = servo_details['{}_degrees'.format(movement)]
+    time.sleep(servo_details['{}_time'.format(movement)])
+    kit.servo[channel].angle = servo_details['stationary_degrees']
 
 
 if __name__ == '__main__':
