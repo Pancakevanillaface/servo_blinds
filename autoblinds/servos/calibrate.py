@@ -61,9 +61,11 @@ def calibrate_servo(channels, channel):
     servo_details['open_time'] = period
 
 
-def check_config(SERVO_DETAILS):
+def has_calibrated_servo_details(SERVO_DETAILS):
     details = {'stationary_degrees', 'open_time', 'close_time', 'open_degrees', 'close_degrees'}
-    if details & set(SERVO_DETAILS) == details:
+    if SERVO_DETAILS == None:
+        return False
+    elif details & set(SERVO_DETAILS) == details:
         return True
     else:
         return False

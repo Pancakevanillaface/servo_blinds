@@ -35,7 +35,7 @@ class ServosController(object):
                 self.config[key]['SUNSET_BUFFER'] = 0
 
             if 'SERVO_DETAILS' in self.config[key]:
-                if not calibrate.check_config(self.config[key]['SERVO_DETAILS']):
+                if not calibrate.has_calibrated_servo_details(self.config[key]['SERVO_DETAILS']):
                     self.calibrate()
             else:
                 self.calibrate()
