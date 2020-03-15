@@ -2,6 +2,15 @@ from adafruit_servokit import ServoKit
 import time
 
 
+def is_calibrated(key, servo_details):
+    if (key not in servo_details):
+        return True
+    elif (servo_details[key] is None):
+        return True
+    else:
+        return False
+
+
 def calibrate_servo(channels, channel, servo_details=None):
     """
     Finds the stationary point and how long it takes to operate the servo
@@ -12,7 +21,7 @@ def calibrate_servo(channels, channel, servo_details=None):
         servo_details = {}
 
     # find a stationary degree for the servo
-    if ('stationary_degrees' not in servo_details):
+    if is_calibrated('stationary_degrees', servo_details):
         is_stationary = 'n'
         stationary_degrees = 80
         while is_stationary != 'y':
@@ -23,7 +32,7 @@ def calibrate_servo(channels, channel, servo_details=None):
         servo_details['stationary_degrees'] = stationary_degrees
 
     # find the open/close directions for the servo
-    if ('open_degrees' not in servo_details) or ('close_degrees' not in servo_details):
+    if is_calibrated('open_degrees', servo_details) or is_calibrated('close_degrees', servo_details):
         completely_finished = 'n'
         while completely_finished != 'y':
             kit.servo[channel].angle = 180
@@ -40,10 +49,10 @@ def calibrate_servo(channels, channel, servo_details=None):
                 completely_finished =  'y'
             else:
                 print('You\'ve screwed up. Try again.')
-            kit.servo[channel].angle = stationary_degrees
+            kit.servo[channel].angle = servo_details['stationary_degrees']
 
     # find how long it takes to operate the servo to open/close
-    if ('open_time' not in servo_details) or ('close_time' not in servo_details):
+    if is_calibrated('open_time', servo_details) or is_calibrated('close_time', servo_details):
         period = 0
         increase_delta = 3
         print('Readjust the blind/curtain to the open position.')
@@ -54,12 +63,12 @@ def calibrate_servo(channels, channel, servo_details=None):
                 period += increase_delta
                 kit.servo[channel].angle = servo_details['close_degrees']
                 time.sleep(increase_delta)
-                kit.servo[channel].angle = stationary_degrees
+                kit.servo[channel].angle = servo_details['stationary_degrees']
                 is_closed = input('Is the blind/curtain in the close position? '
                                   'Answer only y or n. ')
             kit.servo[channel].angle = servo_details['open_degrees']
             time.sleep(period)
-            kit.servo[channel].angle = stationary_degrees
+            kit.servo[channel].angle = servo_details['stationary_degrees']
             completely_finished = input('Has the blind/curtain returned to the open position? '
                                         'Answer only y or n.')
 
