@@ -36,9 +36,9 @@ class ServosController(object):
 
             if 'SERVO_DETAILS' in self.config[key]:
                 if not calibrate.check_config(self.config[key]['SERVO_DETAILS']):
-                    self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo()
+                    self.calibrate()
             else:
-                self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo()
+                self.calibrate()
 
     def extract_servo_channels(self):
         return [key for key in self.config if isinstance(key, int)]
@@ -57,6 +57,12 @@ class ServosController(object):
         :return:
         """
         pass
+
+    def calibrate(self):
+        for key in self.extract_servo_channels():
+            self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo(
+                self.config['ALL_CHANNELS'], key
+            )
 
     def schedule_servo_cronjobs(self):
         """

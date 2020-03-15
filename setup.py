@@ -18,7 +18,8 @@ setup(
     install_requires=[
         'Click',
         'PyYAML',
-        'adafruit-circuitpython-servokit'
+        'adafruit-circuitpython-servokit',
+        'astral'
     ],
     entry_points='''
         [console_scripts]
