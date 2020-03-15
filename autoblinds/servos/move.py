@@ -41,6 +41,12 @@ if __name__ == '__main__':
         #            args['channel'],
         #            args['movement'],
         #            servos_controller.config[args['channel']]['SERVO_DETAILS'])
+        # if args['movement'] == 'open':
+        #     servos_controller.config[args['channel']] = 0
+        # elif args['movement'] == 'close':
+        #     servos_controller.config[args['channel']] = 1
+        # servos_controller.write_current_config()
+
         file = open('{}.txt'.format(datetime.now().strftime('%s')), 'w')
         file.write('{}'.format(str(datetime.now())))
         file.close()
