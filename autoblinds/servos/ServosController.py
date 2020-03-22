@@ -79,6 +79,7 @@ class ServosController(object):
         Schedules jobs for the next week and a job to schedule more jobs
         :return:
         """
+        cron.clear_crontab()
         for i in self.extract_servo_channels():
             cron.schedule_cron_jobs(self.config['LAT'],
                                     self.config['LON'],

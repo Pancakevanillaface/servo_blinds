@@ -43,6 +43,7 @@ def schedule_final_cron_job(config_path):
 def clear_crontab():
     cron = CronTab(user=True)
     cron.remove_all()
+    cron.write(user=True)
 
 
 if __name__ == '__main__':
