@@ -14,6 +14,19 @@ def move_servo(channels, channel, movement, servo_details):
     kit.servo[channel].angle = servo_details['stationary_degrees']
 
 
+def override_servo_and_update_status(channel, servos_controller):
+    if servos_controller.config[channel]['STATUS'] == 0:
+        move_servo(servos_controller.config['ALL_CHANNELS'],
+                   channel, 'close',
+                   servos_controller.config[channel]['SERVO_DETAILS'])
+        servos_controller.update_state(channel, 1)
+    elif servos_controller.config[channel]['STATUS'] == 1:
+        move_servo(servos_controller.config['ALL_CHANNELS'],
+                   channel, 'open',
+                   servos_controller.config[channel]['SERVO_DETAILS'])
+        servos_controller.update_state(channel, 0)
+
+
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Move the servo')
 
@@ -36,17 +49,17 @@ if __name__ == '__main__':
     args = vars(arg_parser.parse_args())
 
     servos_controller = ServosController(args['config'])
-    if servos_controller.config['AUTO']:
-        # move_servo(servos_controller.config['ALL_CHANNELS'],
-        #            args['channel'],
-        #            args['movement'],
-        #            servos_controller.config[args['channel']]['SERVO_DETAILS'])
-        # if args['movement'] == 'open':
-        #     servos_controller.config[args['channel']] = 0
-        # elif args['movement'] == 'close':
-        #     servos_controller.config[args['channel']] = 1
-        # servos_controller.write_current_config()
-
-        file = open('{}.txt'.format(datetime.now().strftime('%s')), 'w')
-        file.write('{}'.format(str(datetime.now())))
-        file.close()
+    if args['movement'] == 'open':
+        if (servos_controller.config['AUTO']) and (servos_controller.config[args['channel']]['STATUS'] == 1):
+            move_servo(servos_controller.config['ALL_CHANNELS'],
+                       args['channel'],
+                       args['movement'],
+                       servos_controller.config[args['channel']]['SERVO_DETAILS'])
+            servos_controller.config[args['channel']]['STATUS'] = 0
+    elif args['movement'] == 'close':
+        if (servos_controller.config['AUTO']) and (servos_controller.config[args['channel']]['STATUS'] == 0):
+            move_servo(servos_controller.config['ALL_CHANNELS'],
+                       args['channel'],
+                       args['movement'],
+                       servos_controller.config[args['channel']]['SERVO_DETAILS'])
+            servos_controller.config[args['channel']]['STATUS'] = 1

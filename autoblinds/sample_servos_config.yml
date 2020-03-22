@@ -12,6 +12,12 @@ ALL_CHANNELS: 16
   STATUS: 0.0
   # If positive, delay in minutes on the blind sunrise operation. If negative, brings the blind sunrise operation by x
   # time in minutes. Will default to 0.
+  SERVO_DETAILS:
+    stationary_degrees: 92
+    open_time: 616
+    close_time: 95
+    open_degrees: 90
+    close_degrees: 94
   SUNRISE_BUFFER: 60
   # If positive, delay in minutes on the blind sunset operation. If negative, brings the blind sunset operation by x
   # time in minutes. Will default to 0.

@@ -3,7 +3,8 @@ import os
 import yaml
 
 from autoblinds.servos.ServosController import ServosController
-
+from autoblinds.servos.move import override_servo_and_update_status
+from autoblinds.util.cron import clear_crontab
 
 @click.group()
 def cli():
@@ -35,17 +36,27 @@ def auto_off(config):
     servos_controller = ServosController(config)
     servos_controller.update_auto(False)
     servos_controller.write_current_config()
+    clear_crontab()
 
 
 @cli.command('override')
 @click.option('-c', '--config', required=False, type=str,
               default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
               help='Points to the config file defining servos')
-def override(config):
+@click.option('-ch', '--channel', required=False, type=float,
+              default=None,
+              help='You can select which servo to override, if not included overrides all servos')
+def override(config, channel):
     """
     Changes current state
     """
-    pass
+    servos_controller = ServosController(config)
+    if channel is None:
+        for ch in servos_controller.extract_servo_channels():
+            override_servo_and_update_status(ch, servos_controller)
+    else:
+        override_servo_and_update_status(channel, servos_controller)
+    servos_controller.write_current_config()
 
 
 @cli.command('calibrate')

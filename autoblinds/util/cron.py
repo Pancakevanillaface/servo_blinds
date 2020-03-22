@@ -8,7 +8,7 @@ import os
 import autoblinds.servos.ServosController as ServosController
 
 
-def schedule_cron_jobs(lat, lon, config_path, channel):
+def schedule_cron_jobs(lat, lon, config_path, channel, channel_config):
     path_to_source = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     cron = CronTab(user=True)
 
@@ -20,12 +20,12 @@ def schedule_cron_jobs(lat, lon, config_path, channel):
         # s['sunrise']
         j = cron.new('python3 {} -c {} -ch {} -m open'.format(
             os.path.join(path_to_source, 'servos', 'move.py'), config_path, channel))
-        j.setall(s['sunrise'])
+        j.setall(s['sunrise'] + datetime.timedelta(minutes=channel_config['SUNRISE_BUFFER']))
 
         # s['sunset']
         j = cron.new('python3 {} -c {} -ch {} -m close'.format(
             os.path.join(path_to_source, 'servos', 'move.py'), config_path, channel))
-        j.setall(s['sunset'])
+        j.setall(s['sunset'] + datetime.timedelta(minutes=channel_config['SUNSET_BUFFER']))
 
     cron.write(user=True)
 
@@ -38,6 +38,11 @@ def schedule_final_cron_job(config_path):
         os.path.join(path_to_source, 'util', 'cron.py'), config_path))
     j.setall(date)
     cron.write(user=True)
+
+
+def clear_crontab():
+    cron = CronTab(user=True)
+    cron.remove_all()
 
 
 if __name__ == '__main__':
@@ -54,5 +59,6 @@ if __name__ == '__main__':
 
     servos_controller = ServosController.ServosController(args['config'])
     if servos_controller.config['AUTO']:
+        clear_crontab()
         servos_controller.schedule_servo_cronjobs()
     schedule_final_cron_job(args['config'])

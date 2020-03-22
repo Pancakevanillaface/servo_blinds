@@ -51,6 +51,15 @@ class ServosController(object):
         self.config['AUTO'] = bool_value
         self.write_current_config()
 
+    def update_state(self, channel, i):
+        """
+        :param channel: channel for the servo
+        :param i: 0 or 1
+        :return:
+        """
+        self.config[channel]['SATUS'] = i
+        self.write_current_config()
+
     def check_state_and_auto(self):
         """
         Checks for updates in the config.
@@ -70,7 +79,11 @@ class ServosController(object):
         :return:
         """
         for i in self.extract_servo_channels():
-            cron.schedule_cron_jobs(self.config['LAT'], self.config['LON'], self.config_path, i)
+            cron.schedule_cron_jobs(self.config['LAT'],
+                                    self.config['LON'],
+                                    self.config_path,
+                                    i,
+                                    self.config[i])
         cron.schedule_final_cron_job(self.config_path)
 
     def write_current_config(self):
