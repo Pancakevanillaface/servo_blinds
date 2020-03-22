@@ -39,7 +39,8 @@ if __name__ == '__main__':
     arg_parser.add_argument('-ch',
                             '--channel',
                             help='Servo Channel',
-                            required=True)
+                            required=True,
+                            type=int)
     arg_parser.add_argument('-m',
                             '--movement',
                             help='Whether to perform open or close movement',
