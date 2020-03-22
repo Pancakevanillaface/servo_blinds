@@ -27,6 +27,7 @@ class ServosController(object):
         assert 'ALL_CHANNELS' in self.config
         for key in self.extract_servo_channels():
             assert 'STATUS' in self.config[key]
+            self.config[key]['STATUS'] = float(self.config[key]['STATUS'])
             assert 0.0 <= self.config[key]['STATUS'] <= 1.0
 
             if not 'SUNRISE_BUFFER' in self.config[key]:
@@ -57,15 +58,15 @@ class ServosController(object):
         :param i: 0 or 1
         :return:
         """
-        self.config[channel]['SATUS'] = i
+        self.config[channel]['STATUS'] = float(i)
         self.write_current_config()
 
-    def check_state_and_auto(self):
+    def check_state(self, channel, i):
         """
         Checks for updates in the config.
         :return:
         """
-        pass
+        return self.config[channel]['STATUS'] == float(i)
 
     def calibrate(self):
         for key in self.extract_servo_channels():

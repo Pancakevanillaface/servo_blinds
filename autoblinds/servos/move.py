@@ -15,12 +15,12 @@ def move_servo(channels, channel, movement, servo_details):
 
 
 def override_servo_and_update_status(channel, servos_controller):
-    if servos_controller.config[channel]['STATUS'] == 0:
+    if servos_controller.check_state(channel, 0):
         move_servo(servos_controller.config['ALL_CHANNELS'],
                    channel, 'close',
                    servos_controller.config[channel]['SERVO_DETAILS'])
         servos_controller.update_state(channel, 1)
-    elif servos_controller.config[channel]['STATUS'] == 1:
+    elif servos_controller.check_state(channel, 1):
         move_servo(servos_controller.config['ALL_CHANNELS'],
                    channel, 'open',
                    servos_controller.config[channel]['SERVO_DETAILS'])
@@ -50,16 +50,16 @@ if __name__ == '__main__':
 
     servos_controller = ServosController(args['config'])
     if args['movement'] == 'open':
-        if (servos_controller.config['AUTO']) and (servos_controller.config[args['channel']]['STATUS'] == 1):
+        if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 1)):
             move_servo(servos_controller.config['ALL_CHANNELS'],
                        args['channel'],
                        args['movement'],
                        servos_controller.config[args['channel']]['SERVO_DETAILS'])
-            servos_controller.config[args['channel']]['STATUS'] = 0
+            servos_controller.update_state(channel=args['channel'], i=0.0)
     elif args['movement'] == 'close':
-        if (servos_controller.config['AUTO']) and (servos_controller.config[args['channel']]['STATUS'] == 0):
+        if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 0)):
             move_servo(servos_controller.config['ALL_CHANNELS'],
                        args['channel'],
                        args['movement'],
                        servos_controller.config[args['channel']]['SERVO_DETAILS'])
-            servos_controller.config[args['channel']]['STATUS'] = 1
+            servos_controller.update_state(channel=args['channel'], i=1.0)
