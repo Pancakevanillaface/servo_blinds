@@ -5,7 +5,7 @@ from crontab import CronTab
 import argparse
 import os
 
-import autoblinds.servos.ServosController as ServosController
+import autoblinds.servo.ServosController as ServosController
 
 
 def schedule_cron_jobs(lat, lon, config_path, channel, channel_config):
@@ -19,12 +19,12 @@ def schedule_cron_jobs(lat, lon, config_path, channel, channel_config):
 
         # s['sunrise']
         j = cron.new('python3 {} -c {} -ch {} -m open'.format(
-            os.path.join(path_to_source, 'servos', 'move.py'), config_path, channel))
+            os.path.join(path_to_source, 'servo', 'move.py'), config_path, channel))
         j.setall(s['sunrise'] + datetime.timedelta(minutes=channel_config['SUNRISE_BUFFER']))
 
         # s['sunset']
         j = cron.new('python3 {} -c {} -ch {} -m close'.format(
-            os.path.join(path_to_source, 'servos', 'move.py'), config_path, channel))
+            os.path.join(path_to_source, 'servo', 'move.py'), config_path, channel))
         j.setall(s['sunset'] + datetime.timedelta(minutes=channel_config['SUNSET_BUFFER']))
 
     cron.write(user=True)

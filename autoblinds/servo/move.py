@@ -1,16 +1,21 @@
-from adafruit_servokit import ServoKit
 import time
 import argparse
 import os
 from datetime import datetime
-
-from autoblinds.servos.ServosController import ServosController
+from adafruit_servokit import ServoKit
+from autoblinds.servo.ServosController import ServosController
 
 
 def move_servo(channels, channel, movement, servo_details):
     kit = ServoKit(channels=channels)
     kit.servo[channel].angle = servo_details['{}_degrees'.format(movement)]
-    time.sleep(servo_details['{}_time'.format(movement)])
+
+    t = servo_details['{}_time'.format(movement)]
+    if t is not None:
+        time.sleep(t)
+    else:
+        pass
+
     kit.servo[channel].angle = servo_details['stationary_degrees']
 
 

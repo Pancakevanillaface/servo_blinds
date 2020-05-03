@@ -19,7 +19,11 @@ setup(
         'Click',
         'PyYAML',
         'adafruit-circuitpython-servokit',
-        'astral'
+        'adafruit-circuitpython-vcnl4040',
+        'astral',
+        'coverage',
+        'pytest',
+        'pytest-mock'
     ],
     entry_points='''
         [console_scripts]

@@ -2,7 +2,7 @@ import yaml
 import time
 
 import autoblinds.util.cron as cron
-import autoblinds.servos.calibrate as calibrate
+import autoblinds.servo.calibrate as calibrate
 
 
 class ServosController(object):
