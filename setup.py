@@ -21,6 +21,7 @@ setup(
         'adafruit-circuitpython-servokit',
         'adafruit-circuitpython-vcnl4040',
         'astral',
+        'crontab',
         'coverage',
         'pytest',
         'pytest-mock'

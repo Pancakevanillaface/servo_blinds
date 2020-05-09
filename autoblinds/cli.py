@@ -1,9 +1,10 @@
 import click
 import os
 import yaml
-
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(message)s')
 from autoblinds.servo.ServosController import ServosController
-from autoblinds.servo.move import override_servo_and_update_status
+from autoblinds.servo.move import override_servo
 from autoblinds.util.cron import clear_crontab
 
 @click.group()
@@ -13,7 +14,7 @@ def cli():
 
 @cli.command('on')
 @click.option('-c', '--config', required=False, type=str,
-              default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
+              default=os.path.join(os.path.dirname(__file__), 'config.yml'),
               help='Points to the config file defining servo')
 def auto_on(config):
     """
@@ -27,7 +28,7 @@ def auto_on(config):
 
 @cli.command('off')
 @click.option('-c', '--config', required=False, type=str,
-              default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
+              default=os.path.join(os.path.dirname(__file__), 'config.yml'),
               help='Points to the config file defining servo')
 def auto_off(config):
     """
@@ -41,7 +42,7 @@ def auto_off(config):
 
 @cli.command('override')
 @click.option('-c', '--config', required=False, type=str,
-              default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
+              default=os.path.join(os.path.dirname(__file__), 'config.yml'),
               help='Points to the config file defining servo')
 @click.option('-ch', '--channel', required=False, type=float,
               default=None,
@@ -53,28 +54,15 @@ def override(config, channel):
     servos_controller = ServosController(config)
     if channel is None:
         for ch in servos_controller.extract_servo_channels():
-            override_servo_and_update_status(ch, servos_controller)
+            override_servo(ch, servos_controller)
     else:
-        override_servo_and_update_status(channel, servos_controller)
-    servos_controller.write_current_config()
-
-
-@cli.command('calibrate')
-@click.option('-c', '--config', required=False, type=str,
-              default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
-              help='Calibrates servo')
-def calibrate(config):
-    """
-    Calibrates servo
-    """
-    servos_controller = ServosController(config)
-    servos_controller.calibrate()
+        override_servo(channel, servos_controller)
     servos_controller.write_current_config()
 
 
 @cli.command('stop')
 @click.option('-c', '--config', required=False, type=str,
-              default=os.path.join(os.path.dirname(__file__), 'servos_config.yml'),
+              default=os.path.join(os.path.dirname(__file__), 'config.yml'),
               help='Attempts to stop all servo, works if already calibrated')
 def stop(config):
     """

@@ -1,8 +1,6 @@
 import yaml
-import time
-
+import logging
 import autoblinds.util.cron as cron
-import autoblinds.servo.calibrate as calibrate
 
 
 class ServosController(object):
@@ -14,6 +12,7 @@ class ServosController(object):
 
     def read_current_config(self):
         with open(self.config_path) as c:
+            logging.info('Attempting to read servo config from {}'.format(self.config_path))
             self.config = yaml.load(c, Loader=yaml.FullLoader)
 
     def check_config(self):
@@ -34,12 +33,6 @@ class ServosController(object):
                 self.config[key]['SUNRISE_BUFFER'] = 0
             if not 'SUNSET_BUFFER' in self.config[key]:
                 self.config[key]['SUNSET_BUFFER'] = 0
-
-            if 'SERVO_DETAILS' in self.config[key]:
-                if not calibrate.has_calibrated_servo_details(self.config[key]['SERVO_DETAILS']):
-                    self.calibrate()
-            else:
-                self.calibrate()
 
     def extract_servo_channels(self):
         return [key for key in self.config if isinstance(key, int)]
@@ -67,12 +60,6 @@ class ServosController(object):
         :return:
         """
         return self.config[channel]['STATUS'] == float(i)
-
-    def calibrate(self):
-        for key in self.extract_servo_channels():
-            self.config[key]['SERVO_DETAILS'] = calibrate.calibrate_servo(
-                self.config['ALL_CHANNELS'], key, self.config[key]['SERVO_DETAILS']
-            )
 
     def schedule_servo_cronjobs(self):
         """

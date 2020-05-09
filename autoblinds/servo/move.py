@@ -2,34 +2,41 @@ import time
 import argparse
 import os
 from datetime import datetime
+from autoblinds.sensor.proximity import SensorVNCN4040
 from adafruit_servokit import ServoKit
 from autoblinds.servo.ServosController import ServosController
 
 
-def move_servo(channels, channel, movement, servo_details):
+def move_servo(config, channel, movement):
+    channels = config['ALL_CHANNELS']
+    servo_details = config[channel]['SERVO_DETAILS']
+    if movement == 'open':
+        movement_int = 0
+    elif movement == 'close':
+        movement_int = 1
+    else:
+        raise NotImplementedError('Movement can only be to `open` or `close`')
+
     kit = ServoKit(channels=channels)
     kit.servo[channel].angle = servo_details['{}_degrees'.format(movement)]
 
     t = servo_details['{}_time'.format(movement)]
-    if t is not None:
+    if t != 'sensor':
         time.sleep(t)
     else:
-        pass
+        sensor = SensorVNCN4040(config[channel])
+        while sensor.whithin_closed_range():
+            time.sleep(0.3)
 
     kit.servo[channel].angle = servo_details['stationary_degrees']
+    servos_controller.update_state(channel, movement_int)
 
 
-def override_servo_and_update_status(channel, servos_controller):
+def override_servo(channel, servos_controller):
     if servos_controller.check_state(channel, 0):
-        move_servo(servos_controller.config['ALL_CHANNELS'],
-                   channel, 'close',
-                   servos_controller.config[channel]['SERVO_DETAILS'])
-        servos_controller.update_state(channel, 1)
+        move_servo(servos_controller.config, channel, 'close')
     elif servos_controller.check_state(channel, 1):
-        move_servo(servos_controller.config['ALL_CHANNELS'],
-                   channel, 'open',
-                   servos_controller.config[channel]['SERVO_DETAILS'])
-        servos_controller.update_state(channel, 0)
+        move_servo(servos_controller, channel, 'open')
 
 
 if __name__ == '__main__':
@@ -57,15 +64,11 @@ if __name__ == '__main__':
     servos_controller = ServosController(args['config'])
     if args['movement'] == 'open':
         if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 1)):
-            move_servo(servos_controller.config['ALL_CHANNELS'],
+            move_servo(servos_controller.config,
                        args['channel'],
-                       args['movement'],
-                       servos_controller.config[args['channel']]['SERVO_DETAILS'])
-            servos_controller.update_state(channel=args['channel'], i=0.0)
+                       args['movement'])
     elif args['movement'] == 'close':
         if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 0)):
-            move_servo(servos_controller.config['ALL_CHANNELS'],
+            move_servo(servos_controller.config,
                        args['channel'],
-                       args['movement'],
-                       servos_controller.config[args['channel']]['SERVO_DETAILS'])
-            servos_controller.update_state(channel=args['channel'], i=1.0)
+                       args['movement'])
