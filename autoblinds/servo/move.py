@@ -7,9 +7,9 @@ from adafruit_servokit import ServoKit
 from autoblinds.servo.ServosController import ServosController
 
 
-def move_servo(config, channel, movement):
-    channels = config['ALL_CHANNELS']
-    servo_details = config[channel]['SERVO_DETAILS']
+def move_servo(servos_controller, channel, movement):
+    channels = servos_controller.config['ALL_CHANNELS']
+    servo_details = servos_controller.config[channel]['SERVO_DETAILS']
     if movement == 'open':
         movement_int = 0
     elif movement == 'close':
@@ -24,7 +24,7 @@ def move_servo(config, channel, movement):
     if t != 'sensor':
         time.sleep(t)
     else:
-        sensor = SensorVNCN4040(config[channel])
+        sensor = SensorVNCN4040(servos_controller.config[channel])
         while sensor.proximity_whithin_closed_range():
             time.sleep(0.3)
 
