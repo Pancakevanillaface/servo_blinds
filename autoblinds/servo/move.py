@@ -34,7 +34,7 @@ def move_servo(servos_controller, channel, movement):
 
 def override_servo(channel, servos_controller):
     if servos_controller.check_state(channel, 0):
-        move_servo(servos_controller.config, channel, 'close')
+        move_servo(servos_controller, channel, 'close')
     elif servos_controller.check_state(channel, 1):
         move_servo(servos_controller, channel, 'open')
 
@@ -64,11 +64,11 @@ if __name__ == '__main__':
     servos_controller = ServosController(args['config'])
     if args['movement'] == 'open':
         if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 1)):
-            move_servo(servos_controller.config,
+            move_servo(servos_controller,
                        args['channel'],
                        args['movement'])
     elif args['movement'] == 'close':
         if (servos_controller.config['AUTO']) and (servos_controller.check_state(args['channel'], 0)):
-            move_servo(servos_controller.config,
+            move_servo(servos_controller,
                        args['channel'],
                        args['movement'])
