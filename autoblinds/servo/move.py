@@ -25,7 +25,7 @@ def move_servo(servos_controller, channel, movement):
         time.sleep(t)
     else:
         sensor = SensorVNCN4040(servos_controller.config[channel])
-        while sensor.proximity_whithin_closed_range():
+        while sensor.proximity_within_closed_range():
             time.sleep(0.3)
 
     kit.servo[channel].angle = servo_details['stationary_degrees']
