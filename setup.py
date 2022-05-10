@@ -5,23 +5,22 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="autoblinds",
+    name="servo-blinds",
     version="0.0.1",
     author="pancakevanillaface",
-    description="Python-based process to automate servos based on sunrise/sunset",
+    description="Python-based tool to control servos via mqtt",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Pancakevanillaface/autoblinds",
+    url="https://github.com/Pancakevanillaface/servo_blinds",
     packages=find_packages(),
-    python_requires='>=3.7.3',
-    py_modules=['autoblinds'],
+    python_requires='>=3.9',
+    py_modules=['servo-blinds'],
     install_requires=[
         'Click',
         'PyYAML',
         'adafruit-circuitpython-servokit',
         'adafruit-circuitpython-vcnl4040',
-        'astral',
-        'python-crontab',
+        'paho-mqtt',
         'coverage',
         'pytest',
         'pytest-mock'
