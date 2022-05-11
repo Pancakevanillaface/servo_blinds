@@ -27,6 +27,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        autoblinds=autoblinds.cli:cli
+        servoblinds=servoblinds.cli:cli
     ''',
 )

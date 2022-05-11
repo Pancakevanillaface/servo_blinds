@@ -3,9 +3,9 @@ import os
 import yaml
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(message)s')
-from autoblinds.servo.ServosController import ServosController
-from autoblinds.servo.move import override_servo
-from autoblinds.util.cron import clear_crontab
+from servoblinds.servo.ServosController import ServosController
+from servoblinds.servo.move import override_servo
+from servoblinds.util.cron import clear_crontab
 
 @click.group()
 def cli():

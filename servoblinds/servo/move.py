@@ -2,9 +2,9 @@ import time
 import argparse
 import os
 from datetime import datetime
-from autoblinds.sensor.proximity import SensorVNCN4040
+from servoblinds.sensor.sensor import SensorVNCN4040
 from adafruit_servokit import ServoKit
-from autoblinds.servo.ServosController import ServosController
+from servoblinds.servo.ServosController import ServosController
 
 
 def move_servo(servos_controller, channel, movement):

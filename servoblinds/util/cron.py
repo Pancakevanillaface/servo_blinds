@@ -5,7 +5,7 @@ from crontab import CronTab
 import argparse
 import os
 
-import autoblinds.servo.ServosController as ServosController
+import servoblinds.servo.ServosController as ServosController
 
 
 def schedule_cron_jobs(lat, lon, config_path, channel, channel_config):
