@@ -1,9 +1,9 @@
 import yaml
 import logging
-import autoblinds.util.cron as cron
+import servoblinds.util.cron as cron
 
 
-class ServosController(object):
+class ServosController:
     def __init__(self, config_path):
         self.config_path = config_path
         self.config = {}
@@ -17,22 +17,16 @@ class ServosController(object):
 
     def check_config(self):
         """
-        Checks required values are in the config and gives defaults
-        :return:
+        Checks required values are in the config
+        :return: None
         """
-        assert 'AUTO' in self.config
-        assert 'LAT' in self.config
-        assert 'LON' in self.config
         assert 'ALL_CHANNELS' in self.config
         for key in self.extract_servo_channels():
-            assert 'STATUS' in self.config[key]
-            self.config[key]['STATUS'] = float(self.config[key]['STATUS'])
-            assert 0.0 <= self.config[key]['STATUS'] <= 1.0
-
-            if not 'SUNRISE_BUFFER' in self.config[key]:
-                self.config[key]['SUNRISE_BUFFER'] = 0
-            if not 'SUNSET_BUFFER' in self.config[key]:
-                self.config[key]['SUNSET_BUFFER'] = 0
+            assert 'stationary_degrees' in self.config[key]
+            assert 'open_degrees' in self.config[key]
+            assert 'close_degrees' in self.config[key]
+            assert 'open_time' in self.config[key]
+            assert 'close_time' in self.config[key]
 
     def extract_servo_channels(self):
         return [key for key in self.config if isinstance(key, int)]

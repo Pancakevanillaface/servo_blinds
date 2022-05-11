@@ -1,0 +1,30 @@
+# number of all possible servo channels
+ALL_CHANNELS: 16
+
+# integer denotes the channel for the servo
+1:
+  # Current status of the blind 0 is completely up, 1 is completely down. Required.
+  STATUS: 0.0
+  # hacked servos that use degrees for a specified amount of time to achieve continuous rotation
+  SERVO_DETAILS:
+    stationary_degrees: 92
+    open_time: 3
+    close_time: 3
+    open_degrees: 91
+    close_degrees: 93
+2:
+  STATUS: 0.0
+  SERVO_DETAILS:
+    stationary_degrees: 92
+    open_time: 3
+    close_time: 3
+    open_degrees: 91
+    close_degrees: 93
+3:
+  STATUS: 0.0
+  SERVO_DETAILS:
+    stationary_degrees: 92
+    open_time: 3
+    close_time: 3
+    open_degrees: 91
+    close_degrees: 93
