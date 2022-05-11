@@ -1,30 +1,44 @@
 # number of all possible servo channels
-ALL_CHANNELS: 16
+all_servo_channels: 16
 
-# integer denotes the channel for the servo
-1:
-  # Current status of the blind 0 is completely up, 1 is completely down. Required.
-  STATUS: 0.0
-  # hacked servos that use degrees for a specified amount of time to achieve continuous rotation
-  SERVO_DETAILS:
-    stationary_degrees: 92
-    open_time: 3
-    close_time: 3
-    open_degrees: 91
-    close_degrees: 93
-2:
-  STATUS: 0.0
-  SERVO_DETAILS:
-    stationary_degrees: 92
-    open_time: 3
-    close_time: 3
-    open_degrees: 91
-    close_degrees: 93
-3:
-  STATUS: 0.0
-  SERVO_DETAILS:
-    stationary_degrees: 92
-    open_time: 3
-    close_time: 3
-    open_degrees: 91
-    close_degrees: 93
+mqtt:
+  host: localhost
+  username: username
+  password: password
+  # assumes get, set, availability subtopics and default payloads e.g. 'online/offline' for .../availability
+  # need to coincide with topics declared in the `configuration.yaml` for HA
+  sensor_base_topic: living_room/vcnl4040
+  cover_base_topic: living_room/blinds
+
+servo_channels:
+  # integer denotes the channel for the servo
+  1:
+    # Current status of the blind 0 is completely up, 1 is completely down. Required.
+    status: 0.0
+    # determines how the servo is operated
+    servo_type: continuous_hacked
+    # hacked servos that use degrees for a specified amount of time to achieve continuous rotation
+    servo_details:
+      stationary_degrees: 92
+      open_time: 3
+      close_time: 3
+      open_degrees: 91
+      close_degrees: 93
+  2:
+    status: 0.0
+    servo_type: continuous_hacked
+    servo_details:
+      stationary_degrees: 92
+      open_time: 3
+      close_time: 3
+      open_degrees: 91
+      close_degrees: 93
+  3:
+    status: 0.0
+    servo_type: continuous_hacked
+    servo_details:
+      stationary_degrees: 92
+      open_time: 3
+      close_time: 3
+      open_degrees: 91
+      close_degrees: 93
