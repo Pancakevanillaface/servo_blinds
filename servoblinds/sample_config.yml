@@ -12,33 +12,33 @@ mqtt:
 
 servo_channels:
   # integer denotes the channel for the servo
-  1:
+  0:
     # Current status of the blind 0 is completely up, 1 is completely down. Required.
     status: 0.0
     # determines how the servo is operated
     servo_type: continuous_hacked
     # hacked servos that use degrees for a specified amount of time to achieve continuous rotation
     servo_details:
-      stationary_degrees: 92
+      stationary_degrees: 93
       open_time: 3
       close_time: 3
-      open_degrees: 90
-      close_degrees: 94
+      open_degrees: 91
+      close_degrees: 95
+  1:
+    status: 0.0
+    servo_type: continuous_hacked
+    servo_details:
+      stationary_degrees: 93
+      open_time: 3
+      close_time: 3
+      open_degrees: 91
+      close_degrees: 95
   2:
     status: 0.0
     servo_type: continuous_hacked
     servo_details:
-      stationary_degrees: 92
+      stationary_degrees: 93
       open_time: 3
       close_time: 3
-      open_degrees: 90
-      close_degrees: 94
-  3:
-    status: 0.0
-    servo_type: continuous_hacked
-    servo_details:
-      stationary_degrees: 92
-      open_time: 3
-      close_time: 3
-      open_degrees: 90
-      close_degrees: 94
+      open_degrees: 91
+      close_degrees: 95
