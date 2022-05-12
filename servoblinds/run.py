@@ -19,6 +19,7 @@ if __name__ == '__main__':
 
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
+    sc = ServoController(config)
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -33,6 +34,16 @@ if __name__ == '__main__':
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
         logging.info(f'Received message from topic: {msg.topic}, message: {str(msg.payload)}')
+
+        if msg.topic.split('/')[-1] == 'set':
+            if str(msg.payload) == 'OPEN':
+                sc.open()
+            elif str(msg.payload) == 'CLOSE':
+                sc.close()
+            elif str(msg.payload) == 'STOP':
+                sc.stop()
+            else:
+                logging.warning(f'Message {msg.payload} is not understood')
 
     client = mqtt.Client()
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)

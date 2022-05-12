@@ -19,7 +19,7 @@ class ServoController:
         elif movement == 'close':
             new_state = 1.0
         else:
-            raise NotImplementedError('Movement can only be to `open` or `close`')
+            raise NotImplementedError('Movement can only be `open` or `close`')
 
         if self.is_state(new_state):
             logging.warning('Already in requested state')
@@ -31,10 +31,18 @@ class ServoController:
                 kit.servo[channel].angle = servo.servo_details['stationary_degrees']
             self.update_state(new_state)
 
+    def stop(self):
+        logging.info('Stopping all servos')
+        kit = ServoKit(channels=self.config.all_servo_channels)
+        for channel, servo in self.config.servo_channels.items():
+            kit.servo[channel].angle = servo.servo_details['stationary_degrees']
+
     def open(self):
+        logging.info('Opening all')
         self._move('open')
 
     def close(self):
+        logging.info('Closing all')
         self._move('close')
 
     def update_state(self, state):
