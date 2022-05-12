@@ -32,8 +32,6 @@ if __name__ == '__main__':
         topic = config.mqtt.cover_base_topic + '/#'
         logging.info(f'Subscribing to the following topic: {topic}')
         client.subscribe(topic)
-        client.publish(cover_avail_topic, 'online', qos=1)
-        client.publish(sensor_avail_topic, 'online', qos=1)
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
@@ -58,6 +56,8 @@ if __name__ == '__main__':
     client.will_set(sensor_avail_topic, "offline", qos=1)
 
     client.connect(config.mqtt.host)
+    client.publish(cover_avail_topic, 'online', qos=1)
+    client.publish(sensor_avail_topic, 'online', qos=1)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
