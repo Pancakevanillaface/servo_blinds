@@ -36,11 +36,11 @@ if __name__ == '__main__':
         logging.info(f'Received message from topic: {msg.topic}, message: {str(msg.payload)}')
 
         if msg.topic.split('/')[-1] == 'set':
-            if str(msg.payload) == 'OPEN':
+            if str(msg.payload) == b'OPEN':
                 sc.open()
-            elif str(msg.payload) == 'CLOSE':
+            elif str(msg.payload) == b'CLOSE':
                 sc.close()
-            elif str(msg.payload) == 'STOP':
+            elif str(msg.payload) == b'STOP':
                 sc.stop()
             else:
                 logging.warning(f'Message {msg.payload} is not understood')
