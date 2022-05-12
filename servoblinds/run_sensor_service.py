@@ -56,10 +56,10 @@ if __name__ == '__main__':
     while True:
         client.publish(
             sensor_pub_topic,
-            {
+            str({
                 'light': s.light,
                 'white': s.white,
                 'proximity': s.proximity
-            }
+            })
         )
         time.sleep(10)
