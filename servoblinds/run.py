@@ -50,6 +50,8 @@ if __name__ == '__main__':
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
     client.on_connect = on_connect
     client.on_message = on_message
+    client.will_set(config.mqtt.cover_base_topic + '/availability', "offline")
+    client.will_set(config.mqtt.sensor_base_topic + '/availability', "offline")
 
     client.connect(config.mqtt.host)
 
