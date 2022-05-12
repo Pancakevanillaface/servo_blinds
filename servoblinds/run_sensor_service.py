@@ -54,5 +54,5 @@ if __name__ == '__main__':
     s = SensorVNCN4040()
     sensor_pub_topic = config.mqtt.sensor_base_topic + '/get'
     while True:
-        client.publish(sensor_pub_topic, "{\"light\":\"" + str(s.light) + "}\"}")
+        client.publish(sensor_pub_topic, "{\"light\":\"" + str(s.light) + "\"}")
         time.sleep(60)
