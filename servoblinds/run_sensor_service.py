@@ -4,7 +4,7 @@ import yaml
 import time
 import logging
 import paho.mqtt.client as mqtt
-from servoblinds.servo.ServoController import ServoController
+from servoblinds.sensor.sensor import SensorVNCN4040
 from servoblinds.config import Config
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(message)s')
 
@@ -20,7 +20,6 @@ if __name__ == '__main__':
 
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
-    sc = ServoController(config)
     sensor_avail_topic = config.mqtt.sensor_base_topic + '/availability'
 
     # The callback for when the client receives a CONNACK response from the server.
@@ -35,8 +34,7 @@ if __name__ == '__main__':
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
-        payload = msg.payload.decode("utf-8")
-        logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
+        logging.info(f'Received message from topic: {msg.topic}, message: {str(msg.payload)}')
 
     client = mqtt.Client()
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
@@ -52,6 +50,16 @@ if __name__ == '__main__':
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
     client.loop_start()
+
+    s = SensorVNCN4040()
+    sensor_pub_topic = config.mqtt.sensor_base_topic + '/availability'
     while True:
-        client.publish("test", "Hello")
-        time.sleep(10)  # sleep for 10 seconds before next call
+        client.publish(
+            sensor_pub_topic,
+            {
+                'light': s.light,
+                'white': s.white,
+                'proximity': s.proximity
+            }
+        )
+        time.sleep(10)
