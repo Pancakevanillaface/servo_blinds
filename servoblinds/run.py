@@ -15,8 +15,7 @@ if __name__ == '__main__':
                             '--config_path',
                             help='Path to config',
                             required=False,
-                            default=os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                                 'sample_config.yml'))
+                            default=os.path.join(os.path.dirname(__file__), 'sample_config.yml'))
 
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
