@@ -1,6 +1,7 @@
 import os
 import argparse
 import yaml
+import time
 import logging
 import paho.mqtt.client as mqtt
 from servoblinds.servo.ServoController import ServoController
@@ -20,7 +21,6 @@ if __name__ == '__main__':
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
     sc = ServoController(config)
-    cover_avail_topic = config.mqtt.cover_base_topic + '/availability'
     sensor_avail_topic = config.mqtt.sensor_base_topic + '/availability'
 
     # The callback for when the client receives a CONNACK response from the server.
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        topic = config.mqtt.cover_base_topic + '/#'
+        topic = config.mqtt.sensor_base_topic + '/#'
         logging.info(f'Subscribing to the following topic: {topic}')
         client.subscribe(topic)
 
@@ -38,29 +38,20 @@ if __name__ == '__main__':
         payload = msg.payload.decode("utf-8")
         logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
-        if msg.topic.split('/')[-1] == 'set':
-            if payload == 'OPEN':
-                sc.open()
-            elif payload == 'CLOSE':
-                sc.close()
-            elif payload == 'STOP':
-                sc.stop()
-            else:
-                logging.warning(f'Message {payload} is not understood')
-
     client = mqtt.Client()
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.will_set(cover_avail_topic, "offline", qos=1)
     client.will_set(sensor_avail_topic, "offline", qos=1)
 
     client.connect(config.mqtt.host)
-    client.publish(cover_avail_topic, 'online', qos=1)
     client.publish(sensor_avail_topic, 'online', qos=1)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
-    client.loop_forever()
+    client.loop_start()
+    while True:
+        client.publish("test", "Hello")
+        time.sleep(10)  # sleep for 10 seconds before next call
