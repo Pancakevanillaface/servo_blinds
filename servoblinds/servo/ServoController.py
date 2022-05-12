@@ -8,7 +8,7 @@ class ServoController:
     def __init__(self, config: Config):
         self.config = config
 
-    def move(self, movement):
+    def _move(self, movement):
         """
         Moves servo
         :param movement: open, close
@@ -30,6 +30,12 @@ class ServoController:
                 time.sleep(servo.servo_details['{}_time'.format(movement)])
                 kit.servo[channel].angle = servo.servo_details['stationary_degrees']
             self.update_state(new_state)
+
+    def open(self):
+        self._move('open')
+
+    def close(self):
+        self._move('close')
 
     def update_state(self, state):
         """
