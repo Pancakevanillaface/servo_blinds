@@ -11,5 +11,5 @@ while True:
     print("Proximity:", sensor.proximity)
     print("Light:", sensor.light)
     print("White:", sensor.white)
-    time.sleep(0.3)
+    time.sleep(1)
     
