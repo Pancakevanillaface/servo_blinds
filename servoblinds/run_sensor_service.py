@@ -43,7 +43,6 @@ if __name__ == '__main__':
     client.will_set(sensor_avail_topic, "offline", qos=1)
 
     client.connect(config.mqtt.host)
-    client.publish(sensor_avail_topic, 'online', qos=1)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
@@ -53,6 +52,8 @@ if __name__ == '__main__':
 
     s = SensorVNCN4040()
     sensor_pub_topic = config.mqtt.sensor_base_topic + '/get'
+
+    client.publish(sensor_avail_topic, 'online', qos=1)
     while True:
         client.publish(sensor_pub_topic, "{\"light\":\"" + str(s.light) + "\"}")
         time.sleep(60)
