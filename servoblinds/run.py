@@ -20,6 +20,8 @@ if __name__ == '__main__':
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
     sc = ServoController(config)
+    cover_avail_topic = config.mqtt.cover_base_topic + '/availability'
+    sensor_avail_topic = config.mqtt.sensor_base_topic + '/availability'
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -30,6 +32,8 @@ if __name__ == '__main__':
         topic = config.mqtt.cover_base_topic + '/#'
         logging.info(f'Subscribing to the following topic: {topic}')
         client.subscribe(topic)
+        client.publish(cover_avail_topic, 'online', qos=1)
+        client.publish(sensor_avail_topic, 'online', qos=1)
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
@@ -50,8 +54,8 @@ if __name__ == '__main__':
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.will_set(config.mqtt.cover_base_topic + '/availability', "offline")
-    client.will_set(config.mqtt.sensor_base_topic + '/availability', "offline")
+    client.will_set(cover_avail_topic, "offline", qos=1)
+    client.will_set(sensor_avail_topic, "offline", qos=1)
 
     client.connect(config.mqtt.host)
 
