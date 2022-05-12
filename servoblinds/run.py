@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        topic = config.mqtt.cover_base_topic + '#'
+        topic = config.mqtt.cover_base_topic + '/#'
         logging.info(f'Subscribing to the following topic: {topic}')
         client.subscribe(topic)
 
