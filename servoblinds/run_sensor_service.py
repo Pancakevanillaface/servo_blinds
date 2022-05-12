@@ -52,7 +52,7 @@ if __name__ == '__main__':
     client.loop_start()
 
     s = SensorVNCN4040()
-    sensor_pub_topic = config.mqtt.sensor_base_topic + '/availability'
+    sensor_pub_topic = config.mqtt.sensor_base_topic + '/get'
     while True:
         client.publish(
             sensor_pub_topic,
