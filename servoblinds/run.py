@@ -33,17 +33,18 @@ if __name__ == '__main__':
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
-        logging.info(f'Received message from topic: {msg.topic}, message: {str(msg.payload)}')
+        payload = msg.payload.decode("utf-8")
+        logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
         if msg.topic.split('/')[-1] == 'set':
-            if str(msg.payload) == b'OPEN':
+            if payload == 'OPEN':
                 sc.open()
-            elif str(msg.payload) == b'CLOSE':
+            elif payload == 'CLOSE':
                 sc.close()
-            elif str(msg.payload) == b'STOP':
+            elif payload == 'STOP':
                 sc.stop()
             else:
-                logging.warning(f'Message {msg.payload} is not understood')
+                logging.warning(f'Message {payload} is not understood')
 
     client = mqtt.Client()
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
