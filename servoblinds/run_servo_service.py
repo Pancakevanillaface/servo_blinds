@@ -1,6 +1,6 @@
 import os
 import argparse
-import yaml
+import time
 import logging
 import paho.mqtt.client as mqtt
 from servoblinds.servo.ServoController import ServoController
@@ -39,16 +39,16 @@ if __name__ == '__main__':
 
         if msg.topic.split('/')[-1] == 'set':
             if payload == 'OPEN':
-                client.publish(config.mqtt.cover_base_topic + '/get', 'opening', qos=1, retain=True)
+                client.publish(config.mqtt.cover_base_topic + '/get', 'opening', qos=0, retain=False)
                 sc.open()
                 client.publish(config.mqtt.cover_base_topic + '/get', 'open', qos=1, retain=True)
             elif payload == 'CLOSE':
-                client.publish(config.mqtt.cover_base_topic + '/get', 'closing', qos=1, retain=True)
+                client.publish(config.mqtt.cover_base_topic + '/get', 'closing', qos=0, retain=False)
                 sc.close()
                 client.publish(config.mqtt.cover_base_topic + '/get', 'closed', qos=1, retain=True)
             elif payload == 'STOP':
                 sc.stop()
-                client.publish(config.mqtt.cover_base_topic + '/get', 'stopped', qos=1, retain=True)
+                client.publish(config.mqtt.cover_base_topic + '/get', 'stopped', qos=1, retain=False)
             else:
                 logging.warning(f'Message {payload} is not understood')
 
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     client.will_set(cover_avail_topic, "offline", qos=1)
 
     client.connect(config.mqtt.host)
+    time.sleep(5)
     client.publish(cover_avail_topic, 'online', qos=1)
 
     # Blocking call that processes network traffic, dispatches callbacks and
