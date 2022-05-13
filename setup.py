@@ -16,7 +16,6 @@ setup(
     python_requires='>=3.9',
     py_modules=['servo-blinds'],
     install_requires=[
-        'Click',
         'PyYAML',
         'adafruit-circuitpython-servokit',
         'adafruit-circuitpython-vcnl4040',
@@ -24,9 +23,5 @@ setup(
         'coverage',
         'pytest',
         'pytest-mock'
-    ],
-    entry_points='''
-        [console_scripts]
-        servoblinds=servoblinds.cli:cli
-    ''',
+    ]
 )
