@@ -29,7 +29,6 @@ if __name__ == '__main__':
     sc = ServoController(config)
     cover_avail_topic = config.mqtt.util_base_topic + '/availability'
 
-
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
         logging.info("Connected with result code " + str(rc))
@@ -39,7 +38,6 @@ if __name__ == '__main__':
         topic = config.mqtt.util_base_topic + '/#'
         logging.info(f'Subscribing to the following topic: {topic}')
         client.subscribe(topic)
-
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):

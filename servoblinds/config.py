@@ -11,6 +11,7 @@ class MQTTConfig:
     password: str
     sensor_base_topic: str
     cover_base_topic: str
+    util_base_topic: str = ''
 
 
 @dataclass
