@@ -9,6 +9,7 @@ mqtt:
   # need to coincide with topics declared in the `configuration.yaml` for HA
   sensor_base_topic: living_room/vcnl4040
   cover_base_topic: living_room/blinds
+  util_base_topic: living_room/blinds_util
 
 servo_channels:
   # integer denotes the channel for the servo

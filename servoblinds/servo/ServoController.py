@@ -25,11 +25,17 @@ class ServoController:
             logging.warning('Already in requested state')
         else:
             kit = ServoKit(channels=self.config.all_servo_channels)
-            for channel, servo in self.config.servo_channels.items():
-                kit.servo[channel].angle = servo.servo_details['{}_degrees'.format(movement)]
-                time.sleep(servo.servo_details['{}_time'.format(movement)])
-                kit.servo[channel].angle = servo.servo_details['stationary_degrees']
+            for channel in self.config.servo_channels.items():
+                self._move_servo_on_channel(channel, movement, kit)
             self.update_state(new_state)
+
+    def _move_servo_on_channel(self, channel, movement, kit=None):
+        if kit is None:
+            kit = ServoKit(channels=self.config.all_servo_channels)
+        servo = self.config.servo_channels[channel]
+        kit.servo[channel].angle = servo.servo_details['{}_degrees'.format(movement)]
+        time.sleep(servo.servo_details['{}_time'.format(movement)])
+        kit.servo[channel].angle = servo.servo_details['stationary_degrees']
 
     def stop(self):
         logging.info('Stopping all servos')
