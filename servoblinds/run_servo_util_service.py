@@ -17,8 +17,15 @@ if __name__ == '__main__':
                             required=False,
                             default=os.path.join(os.path.dirname(__file__), 'sample_config.yml'))
 
+    arg_parser.add_argument('-it',
+                            '--incremental_time',
+                            help='Time in seconds for incremental movement of a servo',
+                            required=False,
+                            default=1)
+
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
+    t = args['incremental_time']
     sc = ServoController(config)
     cover_avail_topic = config.mqtt.util_base_topic + '/availability'
 
@@ -45,11 +52,11 @@ if __name__ == '__main__':
             os.system('systemctl reboot -i')
         elif command_topic == 'incremental_close':
             if payload == "close_0":
-                sc._move_servo_on_channel(channel=0, movement='close')
+                sc._move_servo_on_channel(channel=0, movement='close', t=t)
             elif payload == "close_1":
-                sc._move_servo_on_channel(channel=1, movement='close')
+                sc._move_servo_on_channel(channel=1, movement='close', t=t)
             elif payload == "close_2":
-                sc._move_servo_on_channel(channel=2, movement='close')
+                sc._move_servo_on_channel(channel=2, movement='close', t=t)
         elif command_topic == 'override_state_blind_open':
             logging.info('State overridden to: open')
             sc.update_state(0.0)

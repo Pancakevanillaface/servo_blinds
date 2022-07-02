@@ -29,12 +29,15 @@ class ServoController:
                 self._move_servo_on_channel(channel, movement, kit)
             self.update_state(new_state)
 
-    def _move_servo_on_channel(self, channel, movement, kit=None):
+    def _move_servo_on_channel(self, channel, movement, kit=None, t: int = None):
         if kit is None:
             kit = ServoKit(channels=self.config.all_servo_channels)
         servo = self.config.servo_channels[channel]
         kit.servo[channel].angle = servo.servo_details['{}_degrees'.format(movement)]
-        time.sleep(servo.servo_details['{}_time'.format(movement)])
+        if t is None:
+            time.sleep(servo.servo_details['{}_time'.format(movement)])
+        else:
+            time.sleep(t)
         kit.servo[channel].angle = servo.servo_details['stationary_degrees']
 
     def stop(self):
