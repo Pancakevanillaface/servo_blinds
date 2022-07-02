@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(me
 def publish_config_numbers(sc):
     for channel, servo in sc.config.servo_channels.items():
         for k, v in servo.servo_details.items():
-            'config/1/open_time'
             client.publish(config.mqtt.util_base_topic + f'/config/{channel}/{k}', v, qos=1, retain=True)
 
 
@@ -41,6 +40,9 @@ if __name__ == '__main__':
     def on_connect(client, userdata, flags, rc):
         logging.info("Connected with result code " + str(rc))
 
+        # publish current values of the config
+        publish_config_numbers(sc)
+
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         topic = config.mqtt.util_base_topic + '/#'
@@ -55,7 +57,7 @@ if __name__ == '__main__':
         command_topic_list = msg.topic.split('/')
         if 'config' in command_topic_list:
             command_topic = command_topic_list[-1]
-            channel = command_topic_list[-2]
+            channel = int(command_topic_list[-2])
             sc.config.servo_channels[channel][command_topic] = int(payload)
             sc.config.write_current_config()
         else:
@@ -91,7 +93,6 @@ if __name__ == '__main__':
     client.connect(config.mqtt.host)
     time.sleep(5)
     client.publish(cover_avail_topic, 'online', qos=1)
-    publish_config_numbers(sc)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
