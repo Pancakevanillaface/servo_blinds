@@ -8,6 +8,14 @@ from servoblinds.config import Config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(message)s')
 
+
+def publish_config_numbers(sc):
+    for channel, servo in sc.config.servo_channels.items():
+        for k, v in servo.servo_details.items():
+            'config/1/open_time'
+            client.publish(config.mqtt.util_base_topic + f'/config/{channel}/{k}', v, qos=1, retain=True)
+
+
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Start MQTT client')
 
@@ -44,27 +52,34 @@ if __name__ == '__main__':
         payload = msg.payload.decode("utf-8")
         logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
-        command_topic = msg.topic.split('/')[-1]
-        if command_topic == 'pi_reboot':
-            # note: ignores all inhibitors, including other users logged in
-            os.system('systemctl reboot -i')
-        elif command_topic == 'incremental_close':
-            if payload == "close_0":
-                sc._move_servo_on_channel(channel=0, movement='close', t=t)
-            elif payload == "close_1":
-                sc._move_servo_on_channel(channel=1, movement='close', t=t)
-            elif payload == "close_2":
-                sc._move_servo_on_channel(channel=2, movement='close', t=t)
-        elif command_topic == 'override_state_blind_open':
-            logging.info('State overridden to: open')
-            sc.update_state(0.0)
-            client.publish(config.mqtt.cover_base_topic + '/get', 'open', qos=1, retain=True)
-        elif command_topic == 'override_state_blind_closed':
-            logging.info('State overridden to: closed')
-            sc.update_state(1.0)
-            client.publish(config.mqtt.cover_base_topic + '/get', 'closed', qos=1, retain=True)
+        command_topic_list = msg.topic.split('/')
+        if 'config' in command_topic_list:
+            command_topic = command_topic_list[-1]
+            channel = command_topic_list[-2]
+            sc.config.servo_channels[channel][command_topic] = int(payload)
+            sc.config.write_current_config()
         else:
-            logging.warning(f'Topic {command_topic} is not understood')
+            command_topic = command_topic_list[-1]
+            if command_topic == 'pi_reboot':
+                # note: ignores all inhibitors, including other users logged in
+                os.system('systemctl reboot -i')
+            elif command_topic == 'incremental_close':
+                if payload == "close_0":
+                    sc._move_servo_on_channel(channel=0, movement='close', t=t)
+                elif payload == "close_1":
+                    sc._move_servo_on_channel(channel=1, movement='close', t=t)
+                elif payload == "close_2":
+                    sc._move_servo_on_channel(channel=2, movement='close', t=t)
+            elif command_topic == 'override_state_blind_open':
+                logging.info('State overridden to: open')
+                sc.update_state(0.0)
+                client.publish(config.mqtt.cover_base_topic + '/get', 'open', qos=1, retain=True)
+            elif command_topic == 'override_state_blind_closed':
+                logging.info('State overridden to: closed')
+                sc.update_state(1.0)
+                client.publish(config.mqtt.cover_base_topic + '/get', 'closed', qos=1, retain=True)
+            else:
+                logging.warning(f'Topic {command_topic} is not understood')
 
 
     client = mqtt.Client()
@@ -76,6 +91,7 @@ if __name__ == '__main__':
     client.connect(config.mqtt.host)
     time.sleep(5)
     client.publish(cover_avail_topic, 'online', qos=1)
+    publish_config_numbers(sc)
 
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
