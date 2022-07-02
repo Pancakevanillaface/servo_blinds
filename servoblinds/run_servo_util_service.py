@@ -58,7 +58,7 @@ if __name__ == '__main__':
         if 'config' in command_topic_list:
             command_topic = command_topic_list[-1]
             channel = int(command_topic_list[-2])
-            sc.config.servo_channels[channel][command_topic] = int(payload)
+            sc.config.servo_channels[channel].update_servo_details_value(command_topic, int(payload))
             sc.config.write_current_config()
         else:
             command_topic = command_topic_list[-1]

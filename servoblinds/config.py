@@ -34,6 +34,9 @@ class ServoChannelConfig:
             assert 'open_time' in self.servo_details
             assert 'close_time' in self.servo_details
 
+    def update_servo_details_value(self, key, value):
+        self.servo_details[key] = value
+
 
 @dataclass
 class Config:
