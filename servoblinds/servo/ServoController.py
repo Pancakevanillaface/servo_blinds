@@ -25,7 +25,7 @@ class ServoController:
             logging.warning('Already in requested state')
         else:
             kit = ServoKit(channels=self.config.all_servo_channels)
-            for channel in self.config.servo_channels.items():
+            for channel, servo in self.config.servo_channels.items():
                 self._move_servo_on_channel(channel, movement, kit)
             self.update_state(new_state)
 
