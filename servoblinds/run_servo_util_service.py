@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s - %(me
 def publish_config_numbers(sc):
     for channel, servo in sc.config.servo_channels.items():
         for k, v in servo.servo_details.items():
-            client.publish(config.mqtt.util_base_topic + f'/config/{channel}/{k}', v, qos=1, retain=True)
+            client.publish(config.mqtt.util_base_topic + f'/config/{channel}/{k}', v, qos=1, retain=False)
 
 
 if __name__ == '__main__':
@@ -64,7 +64,7 @@ if __name__ == '__main__':
             command_topic = command_topic_list[-1]
             if command_topic == 'pi_reboot':
                 # note: ignores all inhibitors, including other users logged in
-                os.system('systemctl reboot -i')
+                os.system('sudo reboot')
             elif command_topic == 'incremental_close':
                 if payload == "close_0":
                     sc._move_servo_on_channel(channel=0, movement='close', t=t)
