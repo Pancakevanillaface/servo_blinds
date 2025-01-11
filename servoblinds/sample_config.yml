@@ -26,14 +26,15 @@ servo_channels:
       open_degrees: 91
       close_degrees: 95
   1:
+    # Current status of the blind 0 is completely up, 1 is completely down. Required.
     status: 0.0
-    servo_type: continuous_hacked
+    # determines how the servo is operated
+    servo_type: continuous
+    # continuous servos that use throttle value to determine speed and run for a specified amount of time
     servo_details:
-      stationary_degrees: 93
+      throttle: 0.2
       open_time: 3
       close_time: 3
-      open_degrees: 91
-      close_degrees: 95
   2:
     status: 0.0
     servo_type: continuous_hacked
