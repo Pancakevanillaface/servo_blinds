@@ -66,12 +66,10 @@ if __name__ == '__main__':
                 # note: ignores all inhibitors, including other users logged in
                 os.system('sudo reboot')
             elif command_topic == 'incremental_close':
-                if payload == "close_0":
-                    sc._move_servo_on_channel(channel=0, movement='close', t=t)
-                elif payload == "close_1":
-                    sc._move_servo_on_channel(channel=1, movement='close', t=t)
-                elif payload == "close_2":
-                    sc._move_servo_on_channel(channel=2, movement='close', t=t)
+                # e.g. payload = "close_0"
+                movement, channel = payload.split('_')
+                channel = int(channel)
+                sc.get_servo_on_channel(channel=channel).move(sc.kit, movement=movement, t=t)
             elif command_topic == 'override_state_blind_open':
                 logging.info('State overridden to: open')
                 sc.update_state(0.0)

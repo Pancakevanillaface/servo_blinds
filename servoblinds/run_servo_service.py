@@ -22,7 +22,7 @@ if __name__ == '__main__':
     sc = ServoController(config)
     cover_avail_topic = config.mqtt.cover_base_topic + '/availability'
 
-    # The callback for when the client receives a CONNACK response from the server.
+    # The callback for when the client receives a CONNECT response from the server.
     def on_connect(client, userdata, flags, rc):
         logging.info("Connected with result code " + str(rc))
 

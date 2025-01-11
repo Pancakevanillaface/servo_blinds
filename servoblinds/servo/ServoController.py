@@ -1,12 +1,25 @@
-import time
 import logging
 from servoblinds.config import Config
+from servoblinds.servo.servo import *
 from adafruit_servokit import ServoKit
+
+SERVO_TYPE_MAP = {
+    'continuous_hacked': ContinuousHackedServo,
+    'continuous': ContinuousServo
+}
 
 
 class ServoController:
     def __init__(self, config: Config):
         self.config = config
+        self.kit = ServoKit(channels=self.config.all_servo_channels)
+        self.servos = {
+            channel: SERVO_TYPE_MAP[servo.servo_type](channel, servo) for channel, servo in
+            config.servo_channels.items()
+        }
+
+    def get_servo_on_channel(self, channel):
+        return self.servos[channel]
 
     def _move(self, movement):
         """
@@ -24,27 +37,14 @@ class ServoController:
         if self.is_state(new_state):
             logging.warning('Already in requested state')
         else:
-            kit = ServoKit(channels=self.config.all_servo_channels)
             for channel, servo in self.config.servo_channels.items():
-                self._move_servo_on_channel(channel, movement, kit)
+                self.get_servo_on_channel(channel).move(self.kit, movement)
             self.update_state(new_state)
-
-    def _move_servo_on_channel(self, channel, movement, kit=None, t: int = None):
-        if kit is None:
-            kit = ServoKit(channels=self.config.all_servo_channels)
-        servo = self.config.servo_channels[channel]
-        kit.servo[channel].angle = servo.servo_details['{}_degrees'.format(movement)]
-        if t is None:
-            time.sleep(servo.servo_details['{}_time'.format(movement)])
-        else:
-            time.sleep(t)
-        kit.servo[channel].angle = servo.servo_details['stationary_degrees']
 
     def stop(self):
         logging.info('Stopping all servos')
-        kit = ServoKit(channels=self.config.all_servo_channels)
         for channel, servo in self.config.servo_channels.items():
-            kit.servo[channel].angle = servo.servo_details['stationary_degrees']
+            self.get_servo_on_channel(channel).stop(self.kit)
 
     def open(self):
         logging.info('Opening all')

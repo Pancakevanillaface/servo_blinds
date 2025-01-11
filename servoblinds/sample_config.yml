@@ -32,6 +32,7 @@ servo_channels:
     servo_type: continuous
     # continuous servos that use throttle value to determine speed and run for a specified amount of time
     servo_details:
+      # - value of throttle will be used for the reverse action
       throttle: 0.2
       open_time: 3
       close_time: 3
