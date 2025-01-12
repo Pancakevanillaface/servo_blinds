@@ -17,6 +17,15 @@ class ServoController:
             channel: SERVO_TYPE_MAP[servo.servo_type](channel, servo) for channel, servo in
             config.servo_channels.items()
         }
+        self.movement_time = self.check_for_equal_movement_time()
+
+    def check_for_equal_movement_time(self):
+        movement_times = {'open': False, 'close': False}
+        for movement in movement_times.keys():
+            times = [servo.time_for_full_cycle(movement) for servo in self.servos.values()]
+            if len(set(times)) == 1:
+                movement_times[movement] = times[0]
+        return movement_times
 
     def get_servo_on_channel(self, channel):
         return self.servos[channel]
@@ -37,8 +46,14 @@ class ServoController:
         if self.is_state(new_state):
             logging.warning('Already in requested state')
         else:
-            for channel, servo in self.config.servo_channels.items():
-                self.get_servo_on_channel(channel).move(self.kit, movement)
+            servos = [self.get_servo_on_channel(channel) for channel, servo in self.config.servo_channels.items()]
+            if self.movement_time[movement]:
+                # all servos can move at the same time
+                [servo.move_without_stopping(self.kit, movement) for servo in servos]
+                time.sleep(self.movement_time[movement])
+                [servo.stop(self.kit) for servo in servos]
+            else:
+                [servo.move(self.kit, movement) for servo in servos]
             self.update_state(new_state)
 
     def stop(self):
