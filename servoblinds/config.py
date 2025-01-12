@@ -19,18 +19,23 @@ class ServoChannelConfig:
     status: str
     servo_type: str
     servo_details: dict
+    valid_types = ['continuous_hacked', 'continuous']
 
     def check_config(self):
         """
         Checks required values are in the config
         :return: None
         """
-        if self.servo_type != 'continuous_hacked':
-            raise NotImplementedError('Only `continuous_hacked` servo type is currently supported')
+        if self.servo_type not in self.valid_types:
+            raise NotImplementedError(f'Only servo types: {self.valid_types} are currently supported')
         if self.servo_type == 'continuous_hacked':
             assert 'stationary_degrees' in self.servo_details
             assert 'open_degrees' in self.servo_details
             assert 'close_degrees' in self.servo_details
+            assert 'open_time' in self.servo_details
+            assert 'close_time' in self.servo_details
+        elif self.servo_type == 'continuous':
+            assert 'throttle' in self.servo_details
             assert 'open_time' in self.servo_details
             assert 'close_time' in self.servo_details
 

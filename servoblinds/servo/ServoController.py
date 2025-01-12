@@ -1,12 +1,34 @@
-import time
 import logging
 from servoblinds.config import Config
+from servoblinds.servo.servo import *
 from adafruit_servokit import ServoKit
+
+SERVO_TYPE_MAP = {
+    'continuous_hacked': ContinuousHackedServo,
+    'continuous': ContinuousServo
+}
 
 
 class ServoController:
     def __init__(self, config: Config):
         self.config = config
+        self.kit = ServoKit(channels=self.config.all_servo_channels)
+        self.servos = {
+            channel: SERVO_TYPE_MAP[servo.servo_type](channel, servo) for channel, servo in
+            config.servo_channels.items()
+        }
+        self.movement_time = self.check_for_equal_movement_time()
+
+    def check_for_equal_movement_time(self):
+        movement_times = {'open': False, 'close': False}
+        for movement in movement_times.keys():
+            times = [servo.time_for_full_cycle(movement) for servo in self.servos.values()]
+            if len(set(times)) == 1:
+                movement_times[movement] = times[0]
+        return movement_times
+
+    def get_servo_on_channel(self, channel):
+        return self.servos[channel]
 
     def _move(self, movement):
         """
@@ -24,27 +46,20 @@ class ServoController:
         if self.is_state(new_state):
             logging.warning('Already in requested state')
         else:
-            kit = ServoKit(channels=self.config.all_servo_channels)
-            for channel, servo in self.config.servo_channels.items():
-                self._move_servo_on_channel(channel, movement, kit)
+            servos = [self.get_servo_on_channel(channel) for channel, servo in self.config.servo_channels.items()]
+            if self.movement_time[movement]:
+                # all servos can move at the same time
+                [servo.move_without_stopping(self.kit, movement) for servo in servos]
+                time.sleep(self.movement_time[movement])
+                [servo.stop(self.kit) for servo in servos]
+            else:
+                [servo.move(self.kit, movement) for servo in servos]
             self.update_state(new_state)
-
-    def _move_servo_on_channel(self, channel, movement, kit=None, t: int = None):
-        if kit is None:
-            kit = ServoKit(channels=self.config.all_servo_channels)
-        servo = self.config.servo_channels[channel]
-        kit.servo[channel].angle = servo.servo_details['{}_degrees'.format(movement)]
-        if t is None:
-            time.sleep(servo.servo_details['{}_time'.format(movement)])
-        else:
-            time.sleep(t)
-        kit.servo[channel].angle = servo.servo_details['stationary_degrees']
 
     def stop(self):
         logging.info('Stopping all servos')
-        kit = ServoKit(channels=self.config.all_servo_channels)
         for channel, servo in self.config.servo_channels.items():
-            kit.servo[channel].angle = servo.servo_details['stationary_degrees']
+            self.get_servo_on_channel(channel).stop(self.kit)
 
     def open(self):
         logging.info('Opening all')
