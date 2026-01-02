@@ -57,7 +57,7 @@ if __name__ == '__main__':
         except Exception as e:
             client.publish(config.mqtt.cover_base_topic + '/error', f'Exception encountered: {e}', qos=1, retain=False)
             logging.error(f'Processing message: {payload} failed with {e}. '
-                          f'The exception has been published on {config.mqtt.cover_base_topic + '/error'}.')
+                          f'The exception has been published on {config.mqtt.cover_base_topic + "/error"}.')
             client.disconnect()
             raise
 
