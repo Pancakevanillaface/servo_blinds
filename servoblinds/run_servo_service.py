@@ -37,20 +37,36 @@ if __name__ == '__main__':
         payload = msg.payload.decode("utf-8")
         logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
-        if msg.topic.split('/')[-1] == 'set':
-            if payload == 'OPEN':
-                client.publish(config.mqtt.cover_base_topic + '/get', 'opening', qos=0, retain=False)
-                sc.open()
-                client.publish(config.mqtt.cover_base_topic + '/get', 'open', qos=1, retain=True)
-            elif payload == 'CLOSE':
-                client.publish(config.mqtt.cover_base_topic + '/get', 'closing', qos=0, retain=False)
-                sc.close()
-                client.publish(config.mqtt.cover_base_topic + '/get', 'closed', qos=1, retain=True)
-            elif payload == 'STOP':
-                sc.stop()
-                client.publish(config.mqtt.cover_base_topic + '/get', 'stopped', qos=1, retain=False)
-            else:
-                logging.warning(f'Message {payload} is not understood')
+        try:
+            if msg.topic.split('/')[-1] == 'set':
+                if payload == 'OPEN':
+                    client.publish(config.mqtt.cover_base_topic + '/get', 'opening', qos=0, retain=False)
+                    sc.open()
+                    client.publish(config.mqtt.cover_base_topic + '/get', 'open', qos=1, retain=True)
+                elif payload == 'CLOSE':
+                    client.publish(config.mqtt.cover_base_topic + '/get', 'closing', qos=0, retain=False)
+                    sc.close()
+                    client.publish(config.mqtt.cover_base_topic + '/get', 'closed', qos=1, retain=True)
+                elif payload == 'STOP':
+                    sc.stop()
+                    client.publish(config.mqtt.cover_base_topic + '/get', 'stopped', qos=1, retain=False)
+                elif payload == 'ERROR':
+                    raise RuntimeError("Manufactured, requested Exception.")
+                else:
+                    logging.warning(f'Message {payload} is not understood')
+        except Exception as e:
+            client.publish(config.mqtt.cover_base_topic + '/error', f'Exception encountered: {e}', qos=1, retain=False)
+            logging.error(f'Processing message: {payload} failed with {e}. '
+                          f'The exception has been published on {config.mqtt.cover_base_topic + '/error'}.')
+            client.disconnect()
+            raise
+
+    def send_heartbeat(client):
+        while client.is_connected():
+            # Send a heartbeat message
+            client.publish(config.mqtt.cover_base_topic + '/heartbeat', "alive", qos=1, retain=False)
+            logging.info(f"Heartbeat sent. Frequency in seconds: {config.mqtt.heartbeat_period_sec}")
+            time.sleep(config.mqtt.heartbeat_period_sec)
 
     client = mqtt.Client()
     client.username_pw_set(username=config.mqtt.username, password=config.mqtt.password)
@@ -66,4 +82,5 @@ if __name__ == '__main__':
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
-    client.loop_forever()
+    client.loop_start()
+    send_heartbeat(client)

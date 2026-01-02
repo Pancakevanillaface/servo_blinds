@@ -12,6 +12,7 @@ class MQTTConfig:
     sensor_base_topic: str
     cover_base_topic: str
     util_base_topic: str = ''
+    heartbeat_period_sec: int = 5
 
 
 @dataclass

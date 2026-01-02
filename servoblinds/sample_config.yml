@@ -10,6 +10,7 @@ mqtt:
   sensor_base_topic: living_room/vcnl4040
   cover_base_topic: living_room/blinds
   util_base_topic: living_room/blinds_util
+  heartbeat_period_sec: 60
 
 servo_channels:
   # integer denotes the channel for the servo
