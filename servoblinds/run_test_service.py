@@ -37,7 +37,7 @@ if __name__ == '__main__':
         payload = msg.payload.decode("utf-8")
         logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
-        print(client._thread_terminate)
+        print(f'client within on_message: {hex(id(client))}')
         try:
             if msg.topic.split('/')[-1] == 'set':
                 if payload == 'ERROR':
@@ -49,14 +49,13 @@ if __name__ == '__main__':
             client.publish(config.mqtt.util_base_topic + '/get', f'Exception encountered: {e}', qos=1, retain=False)
             logging.error(f'Processing message: {payload} failed with {e}. '
                           f'The exception has been swallowed and published.')
-            print(client._thread_terminate)
             raise
 
     def send_heartbeat(client):
         while True:
             # Send a heartbeat message
             print(f'Client is connected: {client.is_connected()}')
-            print(client._thread_terminate)
+            print(f'client within heartbeat: {hex(id(client))}')
             client.publish(config.mqtt.util_base_topic + '/get', "alive", qos=1, retain=False)
             print("Heartbeat sent")
             time.sleep(5)  # Send heartbeat every 5 seconds
