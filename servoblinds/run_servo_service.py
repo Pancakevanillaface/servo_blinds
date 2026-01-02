@@ -85,4 +85,5 @@ if __name__ == '__main__':
     # manual interface.
     logging.info('Starting the loop')
     client.loop_start()
+    logging.info('Loop started')
     send_heartbeat(client)
