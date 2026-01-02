@@ -83,5 +83,6 @@ if __name__ == '__main__':
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
+    logging.info('Starting the loop')
     client.loop_start()
     send_heartbeat(client)
