@@ -65,6 +65,7 @@ if __name__ == '__main__':
     def send_heartbeat(client):
         logging.info(f'Client is connected: {client.is_connected()}')
         while client.is_connected():
+            logging.info(f'Client is connected: {client.is_connected()}')
             # Send a heartbeat message
             client.publish(config.mqtt.cover_base_topic + '/heartbeat', "alive", qos=1, retain=False)
             logging.info(f"Heartbeat sent. Frequency in seconds: {config.mqtt.heartbeat_period_sec}")
@@ -87,4 +88,5 @@ if __name__ == '__main__':
     logging.info('Starting the loop')
     client.loop_start()
     logging.info('Loop started')
+    logging.info(f'Client is connected: {client.is_connected()}')
     send_heartbeat(client)
