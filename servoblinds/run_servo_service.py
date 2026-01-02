@@ -63,6 +63,7 @@ if __name__ == '__main__':
             raise
 
     def send_heartbeat(client):
+        logging.info(f'Client is connected: {client.is_connected()}')
         while client.is_connected():
             # Send a heartbeat message
             client.publish(config.mqtt.cover_base_topic + '/heartbeat', "alive", qos=1, retain=False)
