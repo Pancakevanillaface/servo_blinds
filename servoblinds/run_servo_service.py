@@ -19,6 +19,7 @@ if __name__ == '__main__':
 
     args = vars(arg_parser.parse_args())
     config = Config.read_current_config(args['config_path'])
+    logging.info('Config initialised successfully.')
     sc = ServoController(config)
     cover_avail_topic = config.mqtt.cover_base_topic + '/availability'
 
