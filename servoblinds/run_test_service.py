@@ -37,12 +37,17 @@ if __name__ == '__main__':
         payload = msg.payload.decode("utf-8")
         logging.info(f'Received message from topic: {msg.topic}, message: {payload}')
 
-        if msg.topic.split('/')[-1] == 'set':
-            if payload == 'ERROR':
-                client.publish(config.mqtt.util_base_topic + '/get', 'error', qos=1, retain=False)
-                raise Exception("As requested, we throw an error!")
-            else:
-                logging.warning(f'Message {payload} is not understood')
+        try:
+            if msg.topic.split('/')[-1] == 'set':
+                if payload == 'ERROR':
+                    client.publish(config.mqtt.util_base_topic + '/get', 'error', qos=1, retain=False)
+                    raise Exception("As requested, we throw an error!")
+                else:
+                    logging.warning(f'Message {payload} is not understood')
+        except Exception as e:
+            client.publish(config.mqtt.util_base_topic + '/get', f'Exception encountered: {e}', qos=1, retain=False)
+            logging.error(f'Processing message: {payload} failed with {e}. '
+                          f'The exception has been swallowed and published.')
 
     def send_heartbeat(client):
         while True:
