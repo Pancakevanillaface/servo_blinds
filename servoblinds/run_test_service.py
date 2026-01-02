@@ -47,6 +47,7 @@ if __name__ == '__main__':
     def send_heartbeat(client):
         while True:
             # Send a heartbeat message
+            print(f'Client is connected: {client.is_connected()}')
             client.publish(config.mqtt.util_base_topic + '/get', "alive", qos=1, retain=False)
             print("Heartbeat sent")
             time.sleep(5)  # Send heartbeat every 5 seconds
