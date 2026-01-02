@@ -48,6 +48,7 @@ if __name__ == '__main__':
             client.publish(config.mqtt.util_base_topic + '/get', f'Exception encountered: {e}', qos=1, retain=False)
             logging.error(f'Processing message: {payload} failed with {e}. '
                           f'The exception has been swallowed and published.')
+            raise
 
     def send_heartbeat(client):
         while True:
