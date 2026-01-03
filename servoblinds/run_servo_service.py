@@ -88,5 +88,6 @@ if __name__ == '__main__':
     logging.info('Starting the loop')
     client.loop_start()
     logging.info('Loop started')
+    time.sleep(5)
     logging.info(f'Client is connected: {client.is_connected()}')
     send_heartbeat(client)
