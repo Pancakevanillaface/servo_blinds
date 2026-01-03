@@ -12,6 +12,7 @@ class MQTTConfig:
     sensor_base_topic: str
     cover_base_topic: str
     util_base_topic: str = ''
+    heartbeat_period_sec: int = 5
 
 
 @dataclass
@@ -55,6 +56,7 @@ class Config:
         with open(config_path) as c:
             logging.info(f'Attempting to read servo config from {config_path}')
             config = yaml.load(c, Loader=yaml.FullLoader)
+            logging.info(f'Servo config successfully read from file')
         config['servo_channels'] = {k: ServoChannelConfig(**v) for k, v in config['servo_channels'].items()}
         config['mqtt'] = MQTTConfig(**config['mqtt'])
         config['path'] = config_path

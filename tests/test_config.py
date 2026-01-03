@@ -13,3 +13,4 @@ def test_instantiating_config_from_yaml_results_in_expected_class_types(sample_c
     assert isinstance(config, Config)
     assert isinstance(config.mqtt, MQTTConfig)
     assert isinstance(config.servo_channels[1], ServoChannelConfig)
+    assert isinstance(config.mqtt.heartbeat_period_sec, int)
